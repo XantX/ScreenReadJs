@@ -1,6 +1,9 @@
 var selectedArticle = ""
 var articleIndex = 0 
 
+var selectedLink = ""
+var linkIndex = 0
+
 const synth = window.speechSynthesis;
 
 function talk(text, cancel = true) {
@@ -13,16 +16,30 @@ function sayWelcome() {
 }
 
 document.addEventListener("keydown", (e) => {
-  e.preventDefault()
   console.log(e)
   if (e.ctrlKey === true && e.key.toLowerCase() === " ") {
     sayWelcome()
   }
-
+  if (e.ctrlKey === false && e.key.toLowerCase() === "enter" && selectedLink != "") {
+    selectedLink.click()
+  }
   if (e.ctrlKey === true && e.key.toLowerCase() === "enter") {
     var links = document.getElementsByClassName('text_reader_link')
-    for (let i = 0; i < links.length; i++) {
-      talk(links[i].textContent, false)
+    console.log(links[linkIndex])
+    selectedLink = links[linkIndex]
+    selectedLink.focus()
+    if (links[linkIndex].tagName == 'TEXTAREA') {
+      selectedLink.addEventListener('input', function(e) {
+        talk(selectedLink.value, true)
+      });
+      talk('Seleccionado un text area', false)
+    }  
+    talk(selectedLink.textContent, false)
+
+    if(linkIndex === links.length - 1) {
+      linkIndex = 0
+    } else {
+      linkIndex+=1
     }
   }
 
