@@ -3,7 +3,7 @@ var sendButton = document.getElementById('send')
 
 link.addEventListener('click', function(event) {
   event.preventDefault(); // previene la acción predeterminada del enlace
-  openAlert()
+  openAlert('Abriendo alert')
 });
 
 send.addEventListener('click', function(event) {
@@ -12,5 +12,5 @@ send.addEventListener('click', function(event) {
 });
 
 function openAlert(msg) {
-  alert(msg)
+  talk(msg, true)
 }

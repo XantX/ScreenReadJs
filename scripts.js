@@ -25,16 +25,18 @@ document.addEventListener("keydown", (e) => {
   }
   if (e.ctrlKey === true && e.key.toLowerCase() === "enter") {
     var links = document.getElementsByClassName('text_reader_link')
-    console.log(links[linkIndex])
+    console.log(links[linkIndex].tagName)
     selectedLink = links[linkIndex]
     selectedLink.focus()
+
     if (links[linkIndex].tagName == 'TEXTAREA') {
       selectedLink.addEventListener('input', function(e) {
         talk(selectedLink.value, true)
       });
-      talk('Seleccionado un text area', false)
-    }  
-    talk(selectedLink.textContent, false)
+      talk('Seleccionado un text area', true)
+    } else {
+      talk(selectedLink.textContent, true)
+    }
 
     if(linkIndex === links.length - 1) {
       linkIndex = 0
