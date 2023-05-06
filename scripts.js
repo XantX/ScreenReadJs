@@ -1,5 +1,4 @@
 var active_zoom = false
-
 function makeZoom(event) {
     console.log('click')
     event.preventDefault();
