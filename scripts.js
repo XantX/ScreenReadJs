@@ -8,6 +8,28 @@ function makeZoom(event) {
       scale: 10
     });
 }
+active_filter = false
+function aplicarFiltro() {
+  if(!active_filter) {
+    toggleTest(
+      'colorBlindness',
+      'tritanopia'
+    );
+  } else {
+    removeTests('colorBlindness')
+  }
+  active_filter = !active_filter
+}
+/*protanopia   
+protanomaly
+deuteranopia
+deuteranomaly
+tritanopia            
+tritanomaly            
+achromatopsia
+achromatomaly
+grayscale*/
+
 function activeZoom() {
   console.log("Zoom:", active_zoom)
   if (!active_zoom) {
