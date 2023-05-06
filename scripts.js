@@ -21,6 +21,7 @@ document.addEventListener("keydown", (e) => {
     sayWelcome()
   }
   if (e.ctrlKey === false && e.key.toLowerCase() === "enter" && selectedLink != "") {
+    console.log(selectedLink)
     selectedLink.click()
   }
   if (e.ctrlKey === true && e.key.toLowerCase() === "enter") {
