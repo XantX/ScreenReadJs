@@ -1,3 +1,25 @@
+var active_zoom = false
+
+function makeZoom(event) {
+    console.log('click')
+    event.preventDefault();
+    zoom.to({
+      x: event.pageX,
+      y: event.pageY,
+      scale: 10
+    });
+}
+function activeZoom() {
+  console.log("Zoom:", active_zoom)
+  if (!active_zoom) {
+    document.querySelector('.page-body').addEventListener( 'click', makeZoom);
+  } else {
+    document.querySelector('.page-body').removeEventListener('click', makeZoom);
+  }
+  active_zoom = !active_zoom
+  console.log("Zoom:", active_zoom)
+}
+
 var selectedArticle = ""
 var articleIndex = 0 
 
@@ -17,6 +39,10 @@ function sayWelcome() {
 
 document.addEventListener("keydown", (e) => {
   console.log(e)
+  if (e.ctrlKey === true && e.key.toLowerCase() === "backspace") {
+    activeZoom()
+  }
+
   if (e.ctrlKey === true && e.key.toLowerCase() === " ") {
     sayWelcome()
   }
