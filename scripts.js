@@ -1,12 +1,14 @@
 var active_zoom = false
 function makeZoom(event) {
     console.log('click')
+    console.log(event)
     event.preventDefault();
     zoom.to({
-      x: event.pageX,
-      y: event.pageY,
+      x: event.x,
+      y: event.y,
       scale: 10
     });
+
 }
 active_filter = false
 function aplicarFiltro() {
@@ -30,11 +32,48 @@ achromatopsia
 achromatomaly
 grayscale*/
 
+function addStyleClass() {
+  var styleSheet = document.styleSheets[0]; // Asegúrate de seleccionar el stylesheet adecuado
+  var cssRule = `.zoom-message-txtbox {  
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        background-color: #243c5a;
+        color: #ffffff;
+        font-size: 20rem;
+        text-align: center;
+        width: 80%;
+        height: 80%;
+    }`;
+
+  // Agrega la regla a la hoja de estilos utilizando insertRule()
+  styleSheet.insertRule(cssRule, styleSheet.cssRules.length);
+}
+
 function activeZoom() {
   console.log("Zoom:", active_zoom)
+  const body = document.querySelector('.page-body');
+  const active_message = `<div id="zoom-status" class="zoom-message-txtbox">On</div>`
+  const deactive_message = `<div id="zoom-status" class="zoom-message-txtbox">Off</div>`
+  addStyleClass()
   if (!active_zoom) {
-    document.querySelector('.page-body').addEventListener( 'click', makeZoom);
+    body.insertAdjacentHTML("beforebegin", active_message)
+    setTimeout(() => {
+      const zoom_message = document.getElementById("zoom-status")
+      zoom_message.remove()
+    }, 2000)
+    document.querySelector('.page-body').addEventListener('click', makeZoom);
   } else {
+    body.insertAdjacentHTML("beforebegin", deactive_message)
+    setTimeout(() => {
+      const zoom_message = document.getElementById("zoom-status")
+      zoom_message.remove()
+    }, 2000)
     document.querySelector('.page-body').removeEventListener('click', makeZoom);
   }
   active_zoom = !active_zoom
@@ -46,6 +85,8 @@ var articleIndex = 0
 
 var selectedLink = ""
 var linkIndex = 0
+
+var screenReaderActive = false
 
 const synth = window.speechSynthesis;
 
@@ -60,18 +101,19 @@ function sayWelcome() {
 
 document.addEventListener("keydown", (e) => {
   console.log(e)
-  if (e.ctrlKey === true && e.key.toLowerCase() === "backspace") {
+  if (!screenReaderActive && e.ctrlKey === true && e.key.toLowerCase() === "backspace") {
     activeZoom()
   }
 
   if (e.ctrlKey === true && e.key.toLowerCase() === " ") {
     sayWelcome()
+    screenReaderActive = !screenReaderActive 
   }
-  if (e.ctrlKey === false && e.key.toLowerCase() === "enter" && selectedLink != "") {
+  if (screenReaderActive && e.ctrlKey === false && e.key.toLowerCase() === "enter" && selectedLink != "") {
     console.log(selectedLink)
     selectedLink.click()
   }
-  if (e.ctrlKey === true && e.key.toLowerCase() === "enter") {
+  if (screenReaderActive && e.ctrlKey === true && e.key.toLowerCase() === "enter") {
     var links = document.getElementsByClassName('text_reader_link')
     console.log(links[linkIndex].tagName)
     selectedLink = links[linkIndex]
@@ -93,7 +135,7 @@ document.addEventListener("keydown", (e) => {
     }
   }
 
-  if (e.ctrlKey === true && e.key.toLowerCase() === "arrowright") {
+  if (screenReaderActive && e.ctrlKey === true && e.key.toLowerCase() === "arrowright") {
     var tags = document.getElementsByTagName("article")
     selectedArticle = tags[articleIndex]
     console.log(selectedArticle)
