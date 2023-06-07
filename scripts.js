@@ -1,3 +1,4 @@
+// ============ Zoom seccion ============================
 var active_zoom = false
 function makeZoom(event) {
     console.log('click')
@@ -10,27 +11,6 @@ function makeZoom(event) {
     });
 
 }
-active_filter = false
-function aplicarFiltro() {
-  if(!active_filter) {
-    toggleTest(
-      'colorBlindness',
-      'tritanopia'
-    );
-  } else {
-    removeTests('colorBlindness')
-  }
-  active_filter = !active_filter
-}
-/*protanopia   
-protanomaly
-deuteranopia
-deuteranomaly
-tritanopia            
-tritanomaly            
-achromatopsia
-achromatomaly
-grayscale*/
 
 function addStyleClass() {
   var styleSheet = document.styleSheets[0]; // Asegúrate de seleccionar el stylesheet adecuado
@@ -80,6 +60,135 @@ function activeZoom() {
   console.log("Zoom:", active_zoom)
 }
 
+//==================== Aplicacion de filtros ==================================
+function addFilterStyleClass() {
+  const styleSheet = document.styleSheets[0]; // Asegúrate de seleccionar el stylesheet adecuado
+  const filter_button = `
+      .filter-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #243c5a;
+        color: #ffffff;
+        text-align: center;
+        line-height: 50px;
+        cursor: pointer;
+        z-index: 9999;
+      }
+  `
+  styleSheet.insertRule(filter_button, styleSheet.cssRules.length);
+}
+
+function addFilterBufferStyleClass() {
+  const styleSheet = document.styleSheets[0]; // Asegúrate de seleccionar el stylesheet adecuado
+  const filter_buffer = `
+      .filter-list-buffer {
+          position: fixed;
+          top: 50%;
+          right: 20px;
+          transform: translateY(-50%);
+          z-index: 9999;
+          background-color: #243c5a;
+          color: #ffffff;
+      }
+  `
+  styleSheet.insertRule(filter_buffer, styleSheet.cssRules.length);
+}
+
+function addFilterOptionsStyleClass() {
+  const styleSheet = document.styleSheets[0]; // Asegúrate de seleccionar el stylesheet adecuado
+  const filter_option = `
+      .filter-option {
+        padding: 0.5rem;
+      }
+  `
+  styleSheet.insertRule(filter_option, styleSheet.cssRules.length);
+}
+
+function buildFilterOption ( filterOption ) {
+  return `
+    <div class="filter-option" onClick="startFilter(event)">${filterOption}</div>
+  `
+}
+
+function startFilter(event) {
+  const component = event.target
+  aplicarFiltro(component.textContent)
+}
+
+var filterViewOn = false
+
+function showFilterOptionsList() {
+  if (filterViewOn) {
+    const filter_buffer = document.getElementById('filter_buffer');
+    filter_buffer.remove()
+    filterViewOn = !filterViewOn
+    return
+  }
+  const filterList = [
+    "protanopia",
+    "protanomaly",
+    "deuteranopia",
+    "deuteranomaly",
+    "tritanopia",        
+    "tritanomaly",            
+    "achromatopsia",
+    "achromatomaly",
+    "grayscale"
+  ]
+  const filter_buffer = `
+    <div class="filter-list-buffer" id="filter_buffer"></div>
+  `
+  const filter_button = document.getElementById('filter_button');
+  filter_button.insertAdjacentHTML("beforeend", filter_buffer)
+  addFilterBufferStyleClass()
+
+  filterList.forEach((filter) => {
+    const filter_buffer = document.getElementById('filter_buffer');
+    filter_buffer.insertAdjacentHTML("beforeend", buildFilterOption(filter))
+  })
+  addFilterOptionsStyleClass()
+  filterViewOn = !filterViewOn
+}
+
+function showFilterOptions () { 
+  const button_filter = `
+    <div id="filter_button" class="filter-button" onClick="showFilterOptionsList()">0</div>
+  `
+  addFilterStyleClass()
+  const body = document.querySelector('.page-body');
+  body.insertAdjacentHTML("beforebegin", button_filter)
+}
+
+showFilterOptions()
+
+active_filter = false
+function aplicarFiltro(filtro) {
+  if(!active_filter) {
+    toggleTest(
+      'colorBlindness',
+      filtro 
+    );
+  } else {
+    removeTests('colorBlindness')
+  }
+  active_filter = !active_filter
+}
+/*protanopia   
+protanomaly
+deuteranopia
+deuteranomaly
+tritanopia            
+tritanomaly            
+achromatopsia
+achromatomaly
+grayscale*/
+
+
+//===========================Screen Reader=====================================
 var selectedArticle = ""
 var articleIndex = 0 
 
