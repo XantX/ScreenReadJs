@@ -1,24 +1,64 @@
 //---------------------APCA----------------------
+function generateRandomColor() {
+  var r = Math.floor(Math.random() * 256); // Valor entre 0 y 255
+  var g = Math.floor(Math.random() * 256); // Valor entre 0 y 255
+  var b = Math.floor(Math.random() * 256); // Valor entre 0 y 255
 
-const bgColor = "#ffffff";
-const textColor = "#000000";
-const contrast = calcBPCA(textColor, bgColor)
-const ratio = bridgeRatio(contrast)
-console.log("Contraste APCA:", contrast);
-console.log("Bridge ratio", ratio);
+  var hexR = r.toString(16).padStart(2, "0"); // Asegurar que el valor tenga 2 dígitos
+  var hexG = g.toString(16).padStart(2, "0"); // Asegurar que el valor tenga 2 dígitos
+  var hexB = b.toString(16).padStart(2, "0"); // Asegurar que el valor tenga 2 dígitos
+
+  var hexColor = "#" + hexR + hexG + hexB;
+
+  return hexColor;
+}
+
+function getComplementaryColor(hexColor) {
+  hexColor = hexColor.replace("#", "");
+  var colorValue = parseInt(hexColor, 16);
+  var complementaryValue = 0xffffff ^ colorValue;
+  var complementaryColor =
+    "#" + complementaryValue.toString(16).padStart(6, "0");
+  return complementaryColor;
+}
+
+function generateColorPallete(bgColor) {
+  console.log(bgColor);
+  //Colores triada
+  var triad = generateColorTriad(bgColor);
+  console.log("Triad", triad);
+  var contrast1 = calcBPCA(randomColor, triad[0].toUpperCase());
+  var contrast2 = calcBPCA(randomColor, triad[1].toUpperCase());
+  var contrast3 = calcBPCA(randomColor, triad[2].toUpperCase());
+  console.log('Triada BPCA: ', contrast1, contrast2, contrast3)
+  //Color random
+  var randomColor = getComplementaryColor(bgColor);
+  console.log("Color random", randomColor);
+  var contrast4 = calcBPCA(randomColor, randomColor);
+  console.log('Color random BPCA', contrast4)
+  // Color de alto contraste
+  const contrastingColors = getContrastingColors(bgColor)
+  console.log("Contrasting colors", contrastingColors)
+  contrastingColors.forEach((color) => {
+    var contrast5 = calcBPCA(randomColor, color);
+    console.log('Colores de alto contraste', contrast5)
+  })
+}
+
+generateColorPallete("#fd8e18");
+generateColorPallete("#404040");
 
 // ============ Zoom seccion ============================
-var active_zoom = false
+var active_zoom = false;
 function makeZoom(event) {
-    console.log('click')
-    console.log(event)
-    event.preventDefault();
-    zoom.to({
-      x: event.x,
-      y: event.y,
-      scale: 10
-    });
-
+  console.log("click");
+  console.log(event);
+  event.preventDefault();
+  zoom.to({
+    x: event.x,
+    y: event.y,
+    scale: 10,
+  });
 }
 
 function addStyleClass() {
@@ -45,28 +85,28 @@ function addStyleClass() {
 }
 
 function activeZoom() {
-  console.log("Zoom:", active_zoom)
-  const body = document.querySelector('.page-body');
-  const active_message = `<div id="zoom-status" class="zoom-message-txtbox">On</div>`
-  const deactive_message = `<div id="zoom-status" class="zoom-message-txtbox">Off</div>`
-  addStyleClass()
+  console.log("Zoom:", active_zoom);
+  const body = document.querySelector(".page-body");
+  const active_message = `<div id="zoom-status" class="zoom-message-txtbox">On</div>`;
+  const deactive_message = `<div id="zoom-status" class="zoom-message-txtbox">Off</div>`;
+  addStyleClass();
   if (!active_zoom) {
-    body.insertAdjacentHTML("beforebegin", active_message)
+    body.insertAdjacentHTML("beforebegin", active_message);
     setTimeout(() => {
-      const zoom_message = document.getElementById("zoom-status")
-      zoom_message.remove()
-    }, 2000)
-    document.querySelector('.page-body').addEventListener('click', makeZoom);
+      const zoom_message = document.getElementById("zoom-status");
+      zoom_message.remove();
+    }, 2000);
+    document.querySelector(".page-body").addEventListener("click", makeZoom);
   } else {
-    body.insertAdjacentHTML("beforebegin", deactive_message)
+    body.insertAdjacentHTML("beforebegin", deactive_message);
     setTimeout(() => {
-      const zoom_message = document.getElementById("zoom-status")
-      zoom_message.remove()
-    }, 2000)
-    document.querySelector('.page-body').removeEventListener('click', makeZoom);
+      const zoom_message = document.getElementById("zoom-status");
+      zoom_message.remove();
+    }, 2000);
+    document.querySelector(".page-body").removeEventListener("click", makeZoom);
   }
-  active_zoom = !active_zoom
-  console.log("Zoom:", active_zoom)
+  active_zoom = !active_zoom;
+  console.log("Zoom:", active_zoom);
 }
 
 //==================== Aplicacion de filtros ==================================
@@ -87,7 +127,7 @@ function addFilterStyleClass() {
         cursor: pointer;
         z-index: 9999;
       }
-  `
+  `;
   styleSheet.insertRule(filter_button, styleSheet.cssRules.length);
 }
 
@@ -103,7 +143,7 @@ function addFilterBufferStyleClass() {
           background-color: #243c5a;
           color: #ffffff;
       }
-  `
+  `;
   styleSheet.insertRule(filter_buffer, styleSheet.cssRules.length);
 }
 
@@ -113,78 +153,75 @@ function addFilterOptionsStyleClass() {
       .filter-option {
         padding: 0.5rem;
       }
-  `
+  `;
   styleSheet.insertRule(filter_option, styleSheet.cssRules.length);
 }
 
-function buildFilterOption ( filterOption ) {
+function buildFilterOption(filterOption) {
   return `
     <div class="filter-option" onClick="startFilter(event)">${filterOption}</div>
-  `
+  `;
 }
 
 function startFilter(event) {
-  const component = event.target
-  aplicarFiltro(component.textContent)
+  const component = event.target;
+  aplicarFiltro(component.textContent);
 }
 
-var filterViewOn = false
+var filterViewOn = false;
 
 function showFilterOptionsList() {
   if (filterViewOn) {
-    const filter_buffer = document.getElementById('filter_buffer');
-    filter_buffer.remove()
-    filterViewOn = !filterViewOn
-    return
+    const filter_buffer = document.getElementById("filter_buffer");
+    filter_buffer.remove();
+    filterViewOn = !filterViewOn;
+    return;
   }
   const filterList = [
     "protanopia",
     "protanomaly",
     "deuteranopia",
     "deuteranomaly",
-    "tritanopia",        
-    "tritanomaly",            
+    "tritanopia",
+    "tritanomaly",
     "achromatopsia",
     "achromatomaly",
-    "grayscale"
-  ]
+    "grayscale",
+  ];
   const filter_buffer = `
     <div class="filter-list-buffer" id="filter_buffer"></div>
-  `
-  const filter_button = document.getElementById('filter_button');
-  filter_button.insertAdjacentHTML("beforeend", filter_buffer)
-  addFilterBufferStyleClass()
+  `;
+  const filter_button = document.getElementById("filter_button");
+  filter_button.insertAdjacentHTML("beforeend", filter_buffer);
+  addFilterBufferStyleClass();
 
   filterList.forEach((filter) => {
-    const filter_buffer = document.getElementById('filter_buffer');
-    filter_buffer.insertAdjacentHTML("beforeend", buildFilterOption(filter))
-  })
-  addFilterOptionsStyleClass()
-  filterViewOn = !filterViewOn
+    const filter_buffer = document.getElementById("filter_buffer");
+    filter_buffer.insertAdjacentHTML("beforeend", buildFilterOption(filter));
+  });
+  addFilterOptionsStyleClass();
+  filterViewOn = !filterViewOn;
 }
 
-function showFilterOptions () { 
+function showFilterOptions() {
   const button_filter = `
     <div id="filter_button" class="filter-button" onClick="showFilterOptionsList()">0</div>
-  `
-  addFilterStyleClass()
-  const body = document.querySelector('.page-body');
-  body.insertAdjacentHTML("beforebegin", button_filter)
+  `;
+  addFilterStyleClass();
+  const body = document.querySelector(".page-body");
+  body.insertAdjacentHTML("beforebegin", button_filter);
 }
 
-showFilterOptions()
+showFilterOptions();
 
-active_filter = false
+active_filter = false;
 function aplicarFiltro(filtro) {
-  if(!active_filter) {
-    toggleTest(
-      'colorBlindness',
-      filtro 
-    );
+  if (!active_filter) {
+    toggleTest("colorBlindness", filtro);
   } else {
-    removeTests('colorBlindness')
+    removeTests("colorBlindness");
   }
-  active_filter = !active_filter
+  active_filter = !active_filter;
 }
 /*protanopia   
 protanomaly
@@ -196,76 +233,93 @@ achromatopsia
 achromatomaly
 grayscale*/
 
-
 //===========================Screen Reader=====================================
-var selectedArticle = ""
-var articleIndex = 0 
+var selectedArticle = "";
+var articleIndex = 0;
 
-var selectedLink = ""
-var linkIndex = 0
+var selectedLink = "";
+var linkIndex = 0;
 
-var screenReaderActive = false
+var screenReaderActive = false;
 
 const synth = window.speechSynthesis;
 
 function talk(text, cancel = true) {
-  cancel? synth.cancel() : " "
-  synth.speak(new SpeechSynthesisUtterance(text))
+  cancel ? synth.cancel() : " ";
+  synth.speak(new SpeechSynthesisUtterance(text));
 }
 
 function sayWelcome() {
-  talk("Hola bienvenido a la pagina X, si desea leer las acciones de la pagina presione control y enter")
+  talk(
+    "Hola bienvenido a la pagina X, si desea leer las acciones de la pagina presione control y enter"
+  );
 }
 
 document.addEventListener("keydown", (e) => {
-  console.log(e)
-  if (!screenReaderActive && e.ctrlKey === true && e.key.toLowerCase() === "backspace") {
-    activeZoom()
+  console.log(e);
+  if (
+    !screenReaderActive &&
+    e.ctrlKey === true &&
+    e.key.toLowerCase() === "backspace"
+  ) {
+    activeZoom();
   }
 
   if (e.ctrlKey === true && e.key.toLowerCase() === " ") {
-    sayWelcome()
-    screenReaderActive = !screenReaderActive 
+    sayWelcome();
+    screenReaderActive = !screenReaderActive;
   }
-  if (screenReaderActive && e.ctrlKey === false && e.key.toLowerCase() === "enter" && selectedLink != "") {
-    console.log(selectedLink)
-    selectedLink.click()
+  if (
+    screenReaderActive &&
+    e.ctrlKey === false &&
+    e.key.toLowerCase() === "enter" &&
+    selectedLink != ""
+  ) {
+    console.log(selectedLink);
+    selectedLink.click();
   }
-  if (screenReaderActive && e.ctrlKey === true && e.key.toLowerCase() === "enter") {
-    var links = document.getElementsByClassName('text_reader_link')
-    console.log(links[linkIndex].tagName)
-    selectedLink = links[linkIndex]
-    selectedLink.focus()
+  if (
+    screenReaderActive &&
+    e.ctrlKey === true &&
+    e.key.toLowerCase() === "enter"
+  ) {
+    var links = document.getElementsByClassName("text_reader_link");
+    console.log(links[linkIndex].tagName);
+    selectedLink = links[linkIndex];
+    selectedLink.focus();
 
-    if (links[linkIndex].tagName == 'TEXTAREA') {
-      selectedLink.addEventListener('input', function(e) {
-        talk(selectedLink.value, true)
+    if (links[linkIndex].tagName == "TEXTAREA") {
+      selectedLink.addEventListener("input", function (e) {
+        talk(selectedLink.value, true);
       });
-      talk('Seleccionado un text area', true)
+      talk("Seleccionado un text area", true);
     } else {
-      talk(selectedLink.textContent, true)
+      talk(selectedLink.textContent, true);
     }
 
-    if(linkIndex === links.length - 1) {
-      linkIndex = 0
+    if (linkIndex === links.length - 1) {
+      linkIndex = 0;
     } else {
-      linkIndex+=1
-    }
-  }
-
-  if (screenReaderActive && e.ctrlKey === true && e.key.toLowerCase() === "arrowright") {
-    var tags = document.getElementsByTagName("article")
-    selectedArticle = tags[articleIndex]
-    console.log(selectedArticle)
-    console.log(articleIndex)
-
-    talk(selectedArticle.textContent)
-
-    if(articleIndex === tags.length - 1) {
-      articleIndex = 0
-    } else {
-      articleIndex+=1
+      linkIndex += 1;
     }
   }
 
-})
+  if (
+    screenReaderActive &&
+    e.ctrlKey === true &&
+    e.key.toLowerCase() === "arrowright"
+  ) {
+    var tags = document.getElementsByTagName("article");
+    selectedArticle = tags[articleIndex];
+    console.log(selectedArticle);
+    console.log(articleIndex);
+
+    talk(selectedArticle.textContent);
+
+    if (articleIndex === tags.length - 1) {
+      articleIndex = 0;
+    } else {
+      articleIndex += 1;
+    }
+  }
+});
