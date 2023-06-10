@@ -1,3 +1,12 @@
+//---------------------APCA----------------------
+
+const bgColor = "#ffffff";
+const textColor = "#000000";
+const contrast = calcBPCA(textColor, bgColor)
+const ratio = bridgeRatio(contrast)
+console.log("Contraste APCA:", contrast);
+console.log("Bridge ratio", ratio);
+
 // ============ Zoom seccion ============================
 var active_zoom = false
 function makeZoom(event) {
