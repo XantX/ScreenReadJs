@@ -35,7 +35,7 @@ function colorParsley(colorIn) {
       return objArray;
     }
   }
-  console.log("colorParsley error: invalid input");
+  console.log("colorParsley error: invalid input", colorIn);
   return [0, 0, 0, 0, false, "inputError"];
 }
 

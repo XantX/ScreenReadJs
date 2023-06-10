@@ -22,31 +22,47 @@ function getComplementaryColor(hexColor) {
   return complementaryColor;
 }
 
+function aplicarColores(colores) {
+  console.log("Colores aplicados")
+  const {bgColor, complementColor} = colores
+  var styleSheet = document.styleSheets[0]; // Asegúrate de seleccionar el stylesheet adecuado
+  var cssRule = `.colors {  
+      background-color: ${bgColor} !important;
+      color: ${complementColor} !important;
+    }`;
+  console.log(cssRule)
+  // Agrega la regla a la hoja de estilos utilizando insertRule()
+  styleSheet.insertRule(cssRule, styleSheet.cssRules.length);
+}
+
 function generateColorPallete(bgColor) {
   console.log(bgColor);
   //Colores triada
   var triad = generateColorTriad(bgColor);
   console.log("Triad", triad);
-  var contrast1 = calcBPCA(randomColor, triad[0].toUpperCase());
-  var contrast2 = calcBPCA(randomColor, triad[1].toUpperCase());
-  var contrast3 = calcBPCA(randomColor, triad[2].toUpperCase());
-  console.log('Triada BPCA: ', contrast1, contrast2, contrast3)
-  //Color random
-  var randomColor = getComplementaryColor(bgColor);
-  console.log("Color random", randomColor);
-  var contrast4 = calcBPCA(randomColor, randomColor);
-  console.log('Color random BPCA', contrast4)
+  var contrast1 = calcBPCA(triad[0].toUpperCase(), bgColor);
+  var contrast2 = calcBPCA(triad[1].toUpperCase(),bgColor);
+  var contrast3 = calcBPCA(triad[2].toUpperCase(), bgColor);
+  console.log('Triada BPCA: ', contrast1, "/", contrast2, "/", contrast3)
+  //Color complementario 
+  var complementColor = getComplementaryColor(bgColor);
+  console.log("Color complementario", complementColor);
+  var contrast4 = calcBPCA(complementColor, bgColor);
+  console.log('Color complementario BPCA', contrast4)
   // Color de alto contraste
   const contrastingColors = getContrastingColors(bgColor)
   console.log("Contrasting colors", contrastingColors)
+
   contrastingColors.forEach((color) => {
-    var contrast5 = calcBPCA(randomColor, color);
+    var contrast5 = calcBPCA(color, bgColor);
     console.log('Colores de alto contraste', contrast5)
   })
+  const colors = {bgColor, complementColor}
+  aplicarColores(colors)
 }
 
 generateColorPallete("#fd8e18");
-generateColorPallete("#404040");
+generateColorPallete("#1234b0");
 
 // ============ Zoom seccion ============================
 var active_zoom = false;
