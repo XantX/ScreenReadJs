@@ -61,7 +61,7 @@ function generateColorPallete(bgColor) {
   aplicarColores(colors)
 }
 
-generateColorPallete("#fd8e18");
+//generateColorPallete("#fd8e18");
 generateColorPallete("#1234b0");
 
 // ============ Zoom seccion ============================
@@ -179,6 +179,12 @@ function buildFilterOption(filterOption) {
   `;
 }
 
+function buildColorOptions(colorOption) {
+  return `
+    <div id="${colorOption}" class="color-options" onClick="startFilter(event)">${colorOption}</div>
+  `;
+}
+
 function startFilter(event) {
   const component = event.target;
   aplicarFiltro(component.textContent);
@@ -204,6 +210,10 @@ function showFilterOptionsList() {
     "achromatomaly",
     "grayscale",
   ];
+   const colorOptions = [
+     "colors",
+     "filter"
+   ];
   const filter_buffer = `
     <div class="filter-list-buffer" id="filter_buffer"></div>
   `;
@@ -211,10 +221,16 @@ function showFilterOptionsList() {
   filter_button.insertAdjacentHTML("beforeend", filter_buffer);
   addFilterBufferStyleClass();
 
+  /*colorOptions.forEach((option) => {
+    const filter_buffer = document.getElementById("filter_buffer");
+    filter_buffer.insertAdjacentHTML("beforeend", buildColorOptions(option));
+  })*/
+
   filterList.forEach((filter) => {
     const filter_buffer = document.getElementById("filter_buffer");
     filter_buffer.insertAdjacentHTML("beforeend", buildFilterOption(filter));
   });
+
   addFilterOptionsStyleClass();
   filterViewOn = !filterViewOn;
 }
